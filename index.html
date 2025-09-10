@@ -1,2 +1,262 @@
 # Pengaduan
-This is web pengaduan from yaluth
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layanan Pengaduan Siswa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .chat-icon { animation: bounce 2s infinite; }
+    @keyframes bounce {
+      0%,20%,50%,80%,100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-orange-50 to-white min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-lg border-b-4 border-orange-400">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="chat-icon">
+          <svg class="w-10 h-10 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800">Layanan Pengaduan Siswa</h1>
+      </div>
+      <button id="adminToggle" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+        Panel Admin
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-8">
+    <!-- Student Form Section -->
+    <div id="studentSection" class="max-w-4xl mx-auto">
+      <div class="text-center mb-8">
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">Sampaikan Aspirasi & Pengaduan Anda</h2>
+        <p class="text-lg text-gray-600">Suara Anda penting bagi kami.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-orange-400">
+        <form id="complaintForm" class="space-y-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
+              <input type="text" id="studentName" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-400 focus:outline-none" placeholder="Masukkan nama lengkap Anda">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Kelas</label>
+              <input type="text" id="studentClass" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-400 focus:outline-none" placeholder="Contoh: XI IPA 1">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Isi Pengaduan/Aspirasi</label>
+            <textarea id="complaintText" required rows="6" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-400 focus:outline-none resize-none" placeholder="Jelaskan pengaduan atau aspirasi Anda..."></textarea>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              Kirim Pengaduan
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Cek Status Section -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-green-400 mt-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Cek Status Pengaduan</h3>
+        <input type="text" id="checkName" placeholder="Masukkan nama Anda" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-green-400 mb-4">
+        <button id="checkStatusBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-medium">Cek Status</button>
+        <div id="statusResult" class="mt-4 text-gray-700"></div>
+      </div>
+    </div>
+
+    <!-- Admin Login Section -->
+    <div id="adminLoginSection" class="max-w-md mx-auto hidden">
+      <div class="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-orange-400">
+        <h2 class="text-2xl font-bold text-center mb-6">Login Admin</h2>
+        <form id="adminLoginForm" class="space-y-4">
+          <input type="text" id="adminUser" placeholder="Username" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-400">
+          <input type="password" id="adminPass" placeholder="Password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-400">
+          <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium">Login</button>
+        </form>
+        <p id="loginError" class="text-red-500 text-center mt-3 hidden">Username atau Password salah!</p>
+      </div>
+    </div>
+
+    <!-- Admin Panel Section -->
+    <div id="adminSection" class="max-w-6xl mx-auto hidden">
+      <div class="text-center mb-8">
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">Panel Admin - Kelola Pengaduan</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-400">
+          <p class="text-sm font-medium text-gray-600">Total Pengaduan</p>
+          <p class="text-3xl font-bold text-gray-800" id="totalComplaints">0</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-400">
+          <p class="text-sm font-medium text-gray-600">Sedang Diproses</p>
+          <p class="text-3xl font-bold text-gray-800" id="processingComplaints">0</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-400">
+          <p class="text-sm font-medium text-gray-600">Selesai</p>
+          <p class="text-3xl font-bold text-gray-800" id="completedComplaints">0</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-orange-500 text-white p-6">
+          <h3 class="text-xl font-bold">Daftar Pengaduan Siswa</h3>
+        </div>
+        <div class="p-6">
+          <div id="complaintsList" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center">
+      <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+      </svg>
+      <h3 class="text-xl font-bold text-gray-800 mb-2">Pengaduan Berhasil Dikirim!</h3>
+      <p class="text-gray-600 mb-6">Terima kasih atas pengaduan Anda.</p>
+      <button id="closeModal" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium">Tutup</button>
+    </div>
+  </div>
+
+  <script>
+    // Data dummy
+    let complaints = [
+      {id:1,name:"Ahmad Rizki",class:"XI IPA 1",complaint:"Lab komputer rusak",status:"Terkirim",date:"2024-01-15"},
+      {id:2,name:"Siti Nurhaliza",class:"X IPS 2",complaint:"Kantin kurang variasi",status:"Diproses",date:"2024-01-14"},
+      {id:3,name:"Budi Santoso",class:"XII IPA 2",complaint:"Tambah koleksi buku",status:"Selesai",date:"2024-01-13"}
+    ];
+    let complaintIdCounter = 4;
+
+    const studentSection = document.getElementById('studentSection');
+    const adminLoginSection = document.getElementById('adminLoginSection');
+    const adminSection = document.getElementById('adminSection');
+    const adminToggle = document.getElementById('adminToggle');
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    const loginError = document.getElementById('loginError');
+    const complaintsList = document.getElementById('complaintsList');
+
+    // Toggle Admin
+    adminToggle.addEventListener('click', () => {
+      if (!adminSection.classList.contains('hidden')) {
+        adminSection.classList.add('hidden');
+        studentSection.classList.remove('hidden');
+        adminToggle.textContent = "Panel Admin";
+      } else {
+        studentSection.classList.add('hidden');
+        adminLoginSection.classList.remove('hidden');
+      }
+    });
+
+    // Login Admin
+    adminLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('adminUser').value;
+      const pass = document.getElementById('adminPass').value;
+      if (user === "Admin" && pass === "Anam") {
+        adminLoginSection.classList.add('hidden');
+        adminSection.classList.remove('hidden');
+        adminToggle.textContent = "Form Siswa";
+        renderComplaints();
+        updateStatistics();
+      } else {
+        loginError.classList.remove('hidden');
+      }
+    });
+
+    // Form pengaduan
+    const complaintForm = document.getElementById('complaintForm');
+    complaintForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('studentName').value;
+      const studentClass = document.getElementById('studentClass').value;
+      const complaintText = document.getElementById('complaintText').value;
+      complaints.unshift({id:complaintIdCounter++,name, class:studentClass, complaint:complaintText,status:"Terkirim",date:new Date().toISOString().split('T')[0]});
+      document.getElementById('successModal').classList.remove('hidden');
+      document.getElementById('successModal').classList.add('flex');
+      complaintForm.reset();
+    });
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('successModal').classList.add('hidden');
+    });
+
+    // Render daftar pengaduan
+    function renderComplaints() {
+      complaintsList.innerHTML = '';
+      complaints.forEach(c => {
+        complaintsList.innerHTML += `
+          <div class="border rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="font-semibold">${c.name}</h4>
+                <p class="text-sm">${c.class} • ${c.date}</p>
+              </div>
+              <div class="flex gap-2 items-center">
+                <select onchange="updateStatus(${c.id}, this.value)" class="text-xs border rounded px-2 py-1">
+                  <option ${c.status==="Terkirim"?"selected":""}>Terkirim</option>
+                  <option ${c.status==="Diproses"?"selected":""}>Diproses</option>
+                  <option ${c.status==="Selesai"?"selected":""}>Selesai</option>
+                </select>
+                <button onclick="deleteComplaint(${c.id})" class="text-red-500 text-xs font-bold">Hapus</button>
+              </div>
+            </div>
+            <p class="mt-2 text-sm">${c.complaint}</p>
+          </div>`;
+      });
+    }
+
+    // Update status
+    function updateStatus(id, status) {
+      const c = complaints.find(x=>x.id===id);
+      if (c) c.status=status;
+      renderComplaints(); updateStatistics();
+    }
+    window.updateStatus = updateStatus;
+
+    // Hapus pengaduan
+    function deleteComplaint(id) {
+      complaints = complaints.filter(c=>c.id!==id);
+      renderComplaints(); updateStatistics();
+    }
+    window.deleteComplaint = deleteComplaint;
+
+    // Statistik
+    function updateStatistics() {
+      document.getElementById('totalComplaints').textContent = complaints.length;
+      document.getElementById('processingComplaints').textContent = complaints.filter(c=>c.status==="Diproses").length;
+      document.getElementById('completedComplaints').textContent = complaints.filter(c=>c.status==="Selesai").length;
+    }
+
+    // Cek status siswa
+    document.getElementById('checkStatusBtn').addEventListener('click', () => {
+      const name = document.getElementById('checkName').value.trim();
+      const resultDiv = document.getElementById('statusResult');
+      const found = complaints.filter(c=>c.name.toLowerCase()===name.toLowerCase());
+      if (found.length>0) {
+        resultDiv.innerHTML = found.map(c=>`<p><b>${c.date}</b> → <span class="font-semibold">${c.status}</span></p>`).join("");
+      } else {
+        resultDiv.innerHTML = `<p class="text-red-500">Tidak ada pengaduan dengan nama tersebut.</p>`;
+      }
+    });
+
+    // Initial render
+    renderComplaints(); updateStatistics();
+  </script>
+</body>
+              </html>
